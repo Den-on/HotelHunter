@@ -5,7 +5,7 @@ bot = TeleBot(BOT_TOKEN)
 
 
 @bot.message_handler(commands=['start'])
-def start(message)
+def start(message):
     """
     Функция для создания кнопок
     :param message: 
