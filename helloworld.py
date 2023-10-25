@@ -22,7 +22,7 @@ def start(message):
 @bot.message_handler(content_types=['text'])
 def send_welcome(message):
     """
-    Функция для ответа на команду '\hello-world'
+    Функция для ответа на команду '\\hello-world'
     и текст 'Привет'
     :param message:
     :return:
