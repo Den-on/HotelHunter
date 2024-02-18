@@ -11,14 +11,6 @@ API_KEY = os.getenv("API_KEY")
 DATABASE_NAME = os.getenv("DATABASE_NAME")
 API_URL = os.getenv("API_URL")
 
-# DEFAULT_COMMANDS = (
-#     ('start', 'Запуск бота'),
-#     ('lowprice', 'Самые недорогие отели в городе'),
-#     ('highprice', 'Самые дорогие отели в городе'),
-#     ('another_city', 'Изменить город'),
-#     ('history', 'История поиска отелей')
-# )
-
 DEFAULT_COMMANDS = (
     ('city_selection', 'Ввести город'),
     ('date_change', 'Сменить даты'),
