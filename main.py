@@ -1,13 +1,13 @@
-from config import API_URL, API_KEY
+from config.config import API_URL, API_KEY
 from telebot.custom_filters import StateFilter
 from telebot.types import Message, BotCommand, CallbackQuery
 from loguru import logger
-import api
-from states import UserStateInput, UserStateInfo
+from utils.api import api
+from states.states import UserStateInput, UserStateInfo
 import requests
 from loader import bot
-from buttons import show_cities_keyboard, sorting_keyboard
-from utils import is_int
+from keyboards.keyboard import show_cities_keyboard, sorting_keyboard
+from utils.utils import is_int
 
 city_id = []
 quantity = []

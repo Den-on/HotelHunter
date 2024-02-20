@@ -2,7 +2,7 @@ import json
 from typing import Dict
 import requests
 from telebot.types import BotCommand
-from config import DEFAULT_COMMANDS
+from config.config import DEFAULT_COMMANDS
 
 inn_date = ''
 outt_date = ''
