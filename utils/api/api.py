@@ -44,5 +44,4 @@ def get_hotels(city_id: str) -> Dict:
             hotels_data[out[i]['hotel_name']] = out[i]['accommodation_type_name'] + \
                                                 '\n💲 Стоимость: ' + str(out[i]['min_total_price']) + ' ' \
                                                 + str(out[i]['currency_code']) + '\n' + out[i]['url']
-            print(out)
     return hotels_data

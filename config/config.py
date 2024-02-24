@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv, find_dotenv
 
 if not find_dotenv():
-    exit("Переменные окружения не загружены, так как отсутствует файл .env.template")
+    exit("Переменные окружения не загружены, так как отсутствует файл .env")
 else:
     load_dotenv()
 
@@ -14,5 +14,6 @@ API_URL = os.getenv("API_URL")
 DEFAULT_COMMANDS = (
     ('city_selection', 'Ввести город'),
     ('date_change', 'Сменить даты'),
-    ('sorting', 'Изменить сортировку')
+    ('sorting', 'Изменить сортировку'),
+    ('history', 'Последние 5 запросов')
 )

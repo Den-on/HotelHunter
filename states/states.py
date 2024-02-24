@@ -4,6 +4,7 @@ from telebot.handler_backends import State, StatesGroup
 class UserStateInfo(StatesGroup):
     name = State()
     city = State()
+    history = State()
 
 
 class UserStateInput(StatesGroup):

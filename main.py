@@ -1,6 +1,8 @@
+import utils.utils
 from config.config import API_URL, API_KEY
 from telebot.custom_filters import StateFilter
 from telebot.types import Message, BotCommand, CallbackQuery
+from telebot.apihelper import ApiTelegramException
 from loguru import logger
 from utils.api import api
 from states.states import UserStateInput, UserStateInfo
@@ -11,9 +13,29 @@ from utils.utils import is_int
 
 city_id = []
 quantity = []
+messages = []
+
 button = bot.set_my_commands([BotCommand('city_selection', 'Ввести город'),
                               BotCommand('date_change', 'Сменить даты'),
-                              BotCommand('sorting', 'Изменить сортировку')])
+                              BotCommand('sorting', 'Изменить сортировку'),
+                              BotCommand('history', 'Последние 5 запросов')])
+
+
+@bot.message_handler(commands=['history'])
+def history_cmd(message: Message) -> None:
+    """
+    Обработчик команды /history
+    Выводит последние 5 запросов пользователя
+    :param message:
+    :return:
+    """
+    bot.set_state(message.chat.id, UserStateInfo.history)
+    try:
+        bot.send_message(message.from_user.id, 'История ваших последних 5 запросов:')
+        bot.send_message(message.from_user.id, '\n'.join(messages))
+    except ApiTelegramException:
+        bot.send_message(message.chat.id, 'Возникла ошибка 😕'
+                                          '\nВыберите другую команду')
 
 
 @bot.message_handler(commands=['start'])
@@ -69,6 +91,11 @@ def city_insert(message: Message) -> None:
     with bot.retrieve_data(message.chat.id) as data:
         data['city_insert'] = message.text
         logger.info(f'Введён город {message.text}')
+        if len(messages) >= 5:
+            messages.pop(0)
+            messages.append(message.text)
+        else:
+            messages.append(message.text)
         cities_url = "https://booking-com.p.rapidapi.com/v1/hotels/locations"
         cities_querystring = {"name": message.text, "locale": "ru"}
 
@@ -86,6 +113,9 @@ def city_insert(message: Message) -> None:
             bot.send_message(message.from_user.id, "🧳 Введите город, в котором ищем:")
         bot.send_message(message.from_user.id, '🔽 Выберите город 🔽',
                          reply_markup=show_cities_keyboard(message, true_cities))
+        if None:
+            bot.send_message(message.chat.id, 'Ничего не найдено.'
+                                              '\nПопробуйте команду выбора города заново')
         bot.set_state(message.chat.id, UserStateInfo.city)
 
 
@@ -122,6 +152,11 @@ def input_quantity(message: Message) -> None:
             logger.info('Ввод и запись количества отелей: ' + message.text + f' User_id: {message.chat.id}')
             with bot.retrieve_data(message.chat.id) as data:
                 data['quantity_hotels'] = message.text
+                if len(messages) >= 5:
+                    messages.pop(0)
+                    messages.append(message.text)
+                else:
+                    messages.append(message.text)
             bot.set_state(user_id=message.chat.id, state=UserStateInput.date_in)
             bot.send_message(message.from_user.id,
                              '🗓 Введите дату ***заселения*** в отель'
@@ -142,6 +177,11 @@ def in_date(message: Message) -> None:
     """
     logger.info('Ввод даты заселения в отель')
     api.inn_date = message.text
+    if len(messages) >= 5:
+        messages.pop(0)
+        messages.append(message.text)
+    else:
+        messages.append(message.text)
     bot.set_state(user_id=message.chat.id, state=UserStateInput.date_out)
     bot.send_message(message.from_user.id, '🗓 Введите дату ***выезда***'
                                            '\n(в числовом формате "месяц-день"):', parse_mode='Markdown')
@@ -158,6 +198,11 @@ def out_date(message: Message) -> None:
     """
     logger.info('Ввод даты выезда из отеля')
     api.outt_date = message.text
+    if len(messages) >= 5:
+        messages.pop(0)
+        messages.append(message.text)
+    else:
+        messages.append(message.text)
     bot.set_state(user_id=message.chat.id, state=UserStateInput.sort)
     bot.send_message(message.from_user.id, '↕ Выберите способ сортировки',
                      reply_markup=sorting_keyboard(message))
@@ -172,6 +217,11 @@ def date_changing(message: Message) -> None:
     :return:
     """
     logger.info('Ввод новой даты заезда в отель')
+    if len(messages) >= 5:
+        messages.pop(0)
+        messages.append(message.text)
+    else:
+        messages.append(message.text)
     bot.set_state(user_id=message.chat.id, state=UserStateInput.date_in)
     bot.send_message(message.from_user.id, '🗓 Введите дату ***заселения*** в отель\n(в числовом формате '
                                            '"месяц-день"):', parse_mode='Markdown')
@@ -263,6 +313,8 @@ def check_command(command: str) -> str:
         return 'DATE_CHANGED'
     elif command == '/city_selection':
         return 'CITY_SELECTED'
+    elif command == '/history':
+        return 'HISTORY_RETURNED'
 
 
 if __name__ == '__main__':

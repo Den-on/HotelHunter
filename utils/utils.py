@@ -12,3 +12,13 @@ def is_int(num: str) -> bool:
         return True
     except ValueError:
         return False
+
+
+def counter():
+    count = 0
+
+    def func():
+        nonlocal count
+        count += 1
+        return count
+    return func
